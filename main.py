@@ -35,6 +35,7 @@ def main(opt):
     check_label_dist(y_train, "Train")
     check_label_dist(y_test, "Test")
 
+    RandomGuess(y_test)
     LR(x_train, y_train, x_test, y_test)
     KNN(x_train, y_train, x_test, y_test)
     DecisionTree(x_train, y_train, x_test, y_test)

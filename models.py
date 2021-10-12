@@ -6,6 +6,13 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
 from utils import cal_score
+import random
+
+
+def RandomGuess(y_test):
+    print("\n" + "*" * 20 + "Using Random Guess." + "*" * 20 + "\n")
+    pred = [random.choice(['B', 'M']) for _ in range(len(y_test))]
+    cal_score(pred=pred, gold=y_test.tolist())
 
 
 def LR(x_train, y_train, x_test, y_test):

@@ -6,6 +6,8 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
 from utils import cal_score
+from Constant import *
+import numpy as np
 import random
 
 
@@ -15,12 +17,28 @@ def RandomGuess(y_test):
     cal_score(pred=pred, gold=y_test.tolist())
 
 
-def LR(x_train, y_train, x_test, y_test):
+def LR(x_train, y_train, x_test, y_test, fea_importance=False):
     print("\n" + "*" * 20 + "Using logistic regression." + "*" * 20 + "\n")
     model = LogisticRegression()
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())
+
+    # print(model.decision_function(x_test)[:10])
+    # print(pred[:10])
+    # print(model.classes_)
+
+    if fea_importance:
+        importance = model.coef_[0]
+        indices_asc = np.argsort(importance)
+        print("Important features for predicting Benign")
+        for i in indices_asc[:5]:
+            print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
+
+        indices_dsc = indices_asc[::-1]
+        print("Important features for predicting Malicious")
+        for i in indices_dsc[:5]:
+            print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
 
 def KNN(x_train, y_train, x_test, y_test):
@@ -31,12 +49,19 @@ def KNN(x_train, y_train, x_test, y_test):
     cal_score(pred=pred, gold=y_test.tolist())
 
 
-def DecisionTree(x_train, y_train, x_test, y_test):
+def DecisionTree(x_train, y_train, x_test, y_test, fea_importance=False):
     print("\n" + "*" * 20 + "Using Decision Tree." + "*" * 20 + "\n")
     model = DecisionTreeClassifier(random_state=1234)
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())
+
+    if fea_importance:
+        importance = model.feature_importances_
+        indices_dsc = np.argsort(importance)[::-1]
+        for i in indices_dsc[:10]:
+            if importance[i] > 1e-4:
+                print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
 
 def NaiveBayes(x_train, y_train, x_test, y_test):
@@ -63,12 +88,19 @@ def SVM_linear(x_train, y_train, x_test, y_test):
     cal_score(pred=pred, gold=y_test.tolist())
 
 
-def RandomForest(x_train, y_train, x_test, y_test):
+def RandomForest(x_train, y_train, x_test, y_test, fea_importance=False):
     print("\n" + "*" * 20 + "Using Random Forest." + "*" * 20 + "\n")
     model = RandomForestClassifier(oob_score=True, random_state=1234)
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())
+
+    if fea_importance:
+        importance = model.feature_importances_
+        indices_dsc = np.argsort(importance)[::-1]
+        for i in indices_dsc[:10]:
+            if importance[i] > 1e-4:
+                print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
 
 def Adaboost(x_train, y_train, x_test, y_test):

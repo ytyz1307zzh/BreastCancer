@@ -12,6 +12,7 @@ pd.set_option("display.width", 160)
 def main(opt):
     dataframe = pd.read_csv(opt.input)
     dataframe.drop('Unnamed: 32', axis=1, inplace=True)
+    dataframe.drop('id', axis=1, inplace=True)
     print(dataframe.head())
     print("\n" + "*" * 20 + "Read data success." + "*" * 20 + "\n")
     total_size = len(dataframe)
@@ -36,13 +37,13 @@ def main(opt):
     check_label_dist(y_test, "Test")
 
     RandomGuess(y_test)
-    LR(x_train, y_train, x_test, y_test)
+    LR(x_train, y_train, x_test, y_test, opt.fea_importance)
     KNN(x_train, y_train, x_test, y_test)
-    DecisionTree(x_train, y_train, x_test, y_test)
+    DecisionTree(x_train, y_train, x_test, y_test, opt.fea_importance)
     NaiveBayes(x_train, y_train, x_test, y_test)
     SVM_nonlinear(x_train, y_train, x_test, y_test)
     SVM_linear(x_train, y_train, x_test, y_test)
-    RandomForest(x_train, y_train, x_test, y_test)
+    RandomForest(x_train, y_train, x_test, y_test, opt.fea_importance)
     Adaboost(x_train, y_train, x_test, y_test)
     NeuralNetwork(x_train, y_train, x_test, y_test)
 
@@ -52,5 +53,7 @@ if __name__ == "__main__":
     parser.add_argument('-input', type=str, default="data/data.csv", help="input data csv file")
     parser.add_argument('-data_norm', action="store_true", default=False,
                         help="specify to apply data normalization")
+    parser.add_argument('-fea_importance', action='store_true', default=False,
+                        help='specify to output feature importance')
     opt = parser.parse_args()
     main(opt)

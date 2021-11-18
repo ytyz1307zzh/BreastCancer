@@ -18,7 +18,7 @@ def main(opt):
     total_size = len(dataframe)
 
     # Features
-    x = dataframe.drop(columns='diagnosis')
+    x = dataframe.drop(columns=LABEL)
     print("Data size: ", total_size, ", shape ", np.shape(x))
 
     # feature correlation

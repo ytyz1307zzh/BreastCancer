@@ -18,12 +18,20 @@ def main(opt):
     total_size = len(dataframe)
 
     # Features
-    x = dataframe.drop(columns='diagnosis').to_numpy()
+    x = dataframe.drop(columns='diagnosis')
+    print("Data size: ", total_size, ", shape ", np.shape(x))
+
+    # feature correlation
+    col_corr = feature_correlation(x, opt.corr_thres)
+    if opt.remove_corr:
+        remove_correlation(x, col_corr)
+
+    x = x.to_numpy()
     if opt.data_norm:
         scaler = StandardScaler()
         scaler.fit(x)
         x = scaler.transform(x)  # numpy array
-    print("Total data size: ", total_size, ", shape ", np.shape(x))
+    print("Final data size: ", total_size, ", shape ", np.shape(x))
     # Predicting Value
     y = dataframe['diagnosis'].to_numpy()
 
@@ -55,5 +63,8 @@ if __name__ == "__main__":
                         help="specify to apply data normalization")
     parser.add_argument('-fea_importance', action='store_true', default=False,
                         help='specify to output feature importance')
+    parser.add_argument('-corr_thres', type=float, default=0.8, help="threshold of feature correlation")
+    parser.add_argument('-remove_corr', action='store_true', default=False,
+                        help='specify to remove the correlated features')
     opt = parser.parse_args()
     main(opt)

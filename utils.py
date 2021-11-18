@@ -1,10 +1,13 @@
-import numpy
+import numpy as np
 import pandas
 from typing import List
 from sklearn.metrics import f1_score, accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+# sns.set(style="whitegrid")
 
 
-def check_label_dist(y: numpy.ndarray, desc: str):
+def check_label_dist(y: np.ndarray, desc: str):
     total_size = len(y)
     ben_size = len([i for i in y if i == 'B'])
     mal_size = total_size - ben_size
@@ -57,6 +60,45 @@ def cal_score(pred: List[str], gold: List[str]):
     macro_f1 = (ben_f1 + mal_f1) / 2
 
     print(f"Accuracy: {round(acc*100, 2)}, Weighted F1: {round(weighted_f1*100, 2)}, Macro F1: {round(macro_f1*100, 2)}")
+
+
+def feature_correlation(df: pandas.DataFrame, threshold: float):
+    # Feature correlation
+    corr = df.corr().round(2)
+
+    # Mask for the upper triangle
+    mask = np.zeros_like(corr, dtype=bool)
+    mask[np.triu_indices_from(mask)] = True
+
+    _, _ = plt.subplots(figsize=(20, 20))  # Set figure size
+    cmap = sns.diverging_palette(220, 10, as_cmap=True)  # Define custom colormap
+
+    # Draw the heatmap
+    sns.heatmap(corr, mask=mask, cmap=cmap, vmin=-1, vmax=1, center=0,
+                square=True, linewidths=.5, cbar_kws={"shrink": .5}, annot=True)
+    plt.tight_layout()
+    plt.show()
+
+    col_corr = []
+    for i in range(len(corr.columns)):
+        for j in range(i):
+            if abs(corr.iloc[i, j]) > threshold:
+                col_corr.append((corr.columns[i], corr.columns[j], corr.iloc[i, j]))
+
+    # sort according to absolute correlation score, in descending order
+    col_corr = sorted(col_corr, key=lambda x: x[2], reverse=True)
+    print(f"{len(col_corr)} pairs of correlated features")
+    print(col_corr)
+    print()
+
+    return col_corr
+
+
+def remove_correlation(df: pandas.DataFrame, col_corr):
+    drop_features = []
+    for f1, f2, score in col_corr:
+        drop_features.append(f2)
+    df.drop(columns=drop_features, inplace=True)
 
 
 def debug_cal_score():

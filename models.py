@@ -5,7 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
-from utils import cal_score
+from utils import cal_score, plot_feature_importance
 from Constant import *
 import numpy as np
 import random
@@ -40,6 +40,8 @@ def LR(x_train, y_train, x_test, y_test, fea_importance=False):
         for i in indices_dsc[:5]:
             print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
+        plot_feature_importance(importance, alg="Logistic Regression")
+
 
 def KNN(x_train, y_train, x_test, y_test):
     print("\n" + "*" * 20 + "Using K nearest neighbors." + "*" * 20 + "\n")
@@ -62,6 +64,8 @@ def DecisionTree(x_train, y_train, x_test, y_test, fea_importance=False):
         for i in indices_dsc[:10]:
             if importance[i] > 1e-4:
                 print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
+
+        plot_feature_importance(importance, alg="Decision Tree")
 
 
 def NaiveBayes(x_train, y_train, x_test, y_test):
@@ -101,6 +105,8 @@ def RandomForest(x_train, y_train, x_test, y_test, fea_importance=False):
         for i in indices_dsc[:10]:
             if importance[i] > 1e-4:
                 print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
+
+        plot_feature_importance(importance, alg="Random Forest")
 
 
 def Adaboost(x_train, y_train, x_test, y_test):

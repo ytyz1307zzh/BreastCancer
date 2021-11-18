@@ -3,6 +3,8 @@ import pandas
 from typing import List
 from sklearn.metrics import f1_score, accuracy_score
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from Constant import *
 import seaborn as sns
 # sns.set(style="whitegrid")
 
@@ -99,6 +101,23 @@ def remove_correlation(df: pandas.DataFrame, col_corr):
     for f1, f2, score in col_corr:
         drop_features.append(f2)
     df.drop(columns=drop_features, inplace=True)
+
+
+def plot_feature_importance(importance, alg: str):
+    assert len(FEATURE_LIST) == len(importance)
+
+    bars = plt.bar(FEATURE_LIST, importance)
+    viridis = cm.get_cmap('viridis', 12)
+    for i in range(len(bars)):
+        bars[i].set_facecolor(viridis(importance[i] / max(importance)))
+
+    plt.title(f'Feature Importance ({alg})', fontsize=12)
+    plt.xlabel('Features', fontsize=10)
+    plt.ylabel('Importance', fontsize=10)
+    plt.xticks(rotation=90, fontsize=6)
+    plt.yticks(fontsize=8)
+    plt.tight_layout()
+    plt.show()
 
 
 def debug_cal_score():

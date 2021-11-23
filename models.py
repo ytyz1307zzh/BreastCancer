@@ -5,7 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
-from pyfm import pylibfm
+from polylearn import FactorizationMachineClassifier
 from utils import cal_score, plot_feature_importance
 from Constant import *
 import numpy as np
@@ -133,14 +133,9 @@ def NeuralNetwork(x_train, y_train, x_test, y_test):
 
 def FM(x_train, y_train, x_test, y_test):
     print("\n" + "*" * 20 + "Using Factorization Machine." + "*" * 20 + "\n")
-    fm = pylibfm.FM(num_factors=50,
-                    num_iter=100,
-                    verbose=True,
-                    task="classification",
-                    validation_size=0.2,
-                    initial_learning_rate=0.001,
-                    learning_rate_schedule="optimal",
-                    seed=1234)
+    fm = FactorizationMachineClassifier(n_components=50,
+                                        random_state=1234,
+                                        max_iter=100)
     fm.fit(x_train, y_train)
     pred = fm.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())

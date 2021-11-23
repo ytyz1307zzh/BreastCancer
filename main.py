@@ -23,7 +23,7 @@ def main(opt):
     print("Data size: ", total_size, ", shape ", np.shape(x))
 
     # feature correlation
-    col_corr = feature_correlation(x, opt.corr_thres)
+    col_corr = feature_correlation(x, opt.corr_thres, opt.do_plot)
     if opt.remove_corr:
         remove_correlation(x, col_corr)
 
@@ -60,15 +60,16 @@ def main(opt):
 
     # run the models
     RandomGuess(y_test)
-    LR(x_train, y_train, x_test, y_test, opt.fea_importance)
+    LR(x_train, y_train, x_test, y_test, opt.fea_importance, opt.do_plot)
     KNN(x_train, y_train, x_test, y_test)
-    DecisionTree(x_train, y_train, x_test, y_test, opt.fea_importance)
+    DecisionTree(x_train, y_train, x_test, y_test, opt.fea_importance, opt.do_plot)
     NaiveBayes(x_train, y_train, x_test, y_test)
     SVM_nonlinear(x_train, y_train, x_test, y_test)
     SVM_linear(x_train, y_train, x_test, y_test)
-    RandomForest(x_train, y_train, x_test, y_test, opt.fea_importance)
+    RandomForest(x_train, y_train, x_test, y_test, opt.fea_importance, opt.do_plot)
     Adaboost(x_train, y_train, x_test, y_test)
     NeuralNetwork(x_train, y_train, x_test, y_test)
+    FM(x_train, y_train, x_test, y_test)
 
 
 if __name__ == "__main__":
@@ -91,5 +92,8 @@ if __name__ == "__main__":
     parser.add_argument('-n_select', default=10, type=int,
                         help='the number of features to select, if -fea_select is not \'none\' '
                              '(not applicable to rfecv)')
+    parser.add_argument('-do_plot', default=False, action='store_true',
+                        help='Specify to plot the figures in matplotlib and seaborn.'
+                             'Otherwise, no figures will be drawn.')
     opt = parser.parse_args()
     main(opt)

@@ -118,22 +118,23 @@ def recursive_feature_elimination(x: np.ndarray, y: np.ndarray):
     return x_rfecv
 
 
-def feature_correlation(df: pandas.DataFrame, threshold: float):
+def feature_correlation(df: pandas.DataFrame, threshold: float, do_plot: bool = False):
     # Feature correlation
     corr = df.corr().round(2)
 
-    # Mask for the upper triangle
-    mask = np.zeros_like(corr, dtype=bool)
-    mask[np.triu_indices_from(mask)] = True
+    if do_plot:
+        # Mask for the upper triangle
+        mask = np.zeros_like(corr, dtype=bool)
+        mask[np.triu_indices_from(mask)] = True
 
-    _, _ = plt.subplots(figsize=(20, 20))  # Set figure size
-    cmap = sns.diverging_palette(220, 10, as_cmap=True)  # Define custom colormap
+        _, _ = plt.subplots(figsize=(20, 20))  # Set figure size
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)  # Define custom colormap
 
-    # Draw the heatmap
-    sns.heatmap(corr, mask=mask, cmap=cmap, vmin=-1, vmax=1, center=0,
-                square=True, linewidths=.5, cbar_kws={"shrink": .5}, annot=True)
-    plt.tight_layout()
-    plt.show()
+        # Draw the heatmap
+        sns.heatmap(corr, mask=mask, cmap=cmap, vmin=-1, vmax=1, center=0,
+                    square=True, linewidths=.5, cbar_kws={"shrink": .5}, annot=True)
+        plt.tight_layout()
+        plt.show()
 
     col_corr = []
     for i in range(len(corr.columns)):

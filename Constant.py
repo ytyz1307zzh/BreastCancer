@@ -16,6 +16,6 @@ WORST_FEATURES = ['radius_worst', 'texture_worst',
 
 LABEL = 'diagnosis'
 
-print(len(FEATURE_LIST))
+# print(len(FEATURE_LIST))
 ID2FEATURE = {i: FEATURE_LIST[i] for i in range(len(FEATURE_LIST))}
 FEATURE2ID = {FEATURE_LIST[i]: i for i in range(len(FEATURE_LIST))}

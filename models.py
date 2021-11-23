@@ -5,6 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier
+from pyfm import pylibfm
 from utils import cal_score, plot_feature_importance
 from Constant import *
 import numpy as np
@@ -17,7 +18,7 @@ def RandomGuess(y_test):
     cal_score(pred=pred, gold=y_test.tolist())
 
 
-def LR(x_train, y_train, x_test, y_test, fea_importance=False):
+def LR(x_train, y_train, x_test, y_test, fea_importance=False, do_plot=False):
     print("\n" + "*" * 20 + "Using logistic regression." + "*" * 20 + "\n")
     model = LogisticRegression()
     model.fit(x_train, y_train)
@@ -40,7 +41,8 @@ def LR(x_train, y_train, x_test, y_test, fea_importance=False):
         for i in indices_dsc[:5]:
             print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
-        plot_feature_importance(importance, alg="Logistic Regression")
+        if do_plot:
+            plot_feature_importance(importance, alg="Logistic Regression")
 
 
 def KNN(x_train, y_train, x_test, y_test):
@@ -51,7 +53,7 @@ def KNN(x_train, y_train, x_test, y_test):
     cal_score(pred=pred, gold=y_test.tolist())
 
 
-def DecisionTree(x_train, y_train, x_test, y_test, fea_importance=False):
+def DecisionTree(x_train, y_train, x_test, y_test, fea_importance=False, do_plot=False):
     print("\n" + "*" * 20 + "Using Decision Tree." + "*" * 20 + "\n")
     model = DecisionTreeClassifier(random_state=1234)
     model.fit(x_train, y_train)
@@ -65,7 +67,8 @@ def DecisionTree(x_train, y_train, x_test, y_test, fea_importance=False):
             if importance[i] > 1e-4:
                 print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
-        plot_feature_importance(importance, alg="Decision Tree")
+        if do_plot:
+            plot_feature_importance(importance, alg="Decision Tree")
 
 
 def NaiveBayes(x_train, y_train, x_test, y_test):
@@ -92,7 +95,7 @@ def SVM_linear(x_train, y_train, x_test, y_test):
     cal_score(pred=pred, gold=y_test.tolist())
 
 
-def RandomForest(x_train, y_train, x_test, y_test, fea_importance=False):
+def RandomForest(x_train, y_train, x_test, y_test, fea_importance=False, do_plot=False):
     print("\n" + "*" * 20 + "Using Random Forest." + "*" * 20 + "\n")
     model = RandomForestClassifier(oob_score=True, random_state=1234)
     model.fit(x_train, y_train)
@@ -106,7 +109,8 @@ def RandomForest(x_train, y_train, x_test, y_test, fea_importance=False):
             if importance[i] > 1e-4:
                 print(f"Feature {i} ({ID2FEATURE[i]}): weight {importance[i]:.4f}")
 
-        plot_feature_importance(importance, alg="Random Forest")
+        if do_plot:
+            plot_feature_importance(importance, alg="Random Forest")
 
 
 def Adaboost(x_train, y_train, x_test, y_test):
@@ -124,4 +128,19 @@ def NeuralNetwork(x_train, y_train, x_test, y_test):
                           random_state=1234, early_stopping=True, n_iter_no_change=10)
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
+    cal_score(pred=pred, gold=y_test.tolist())
+
+
+def FM(x_train, y_train, x_test, y_test):
+    print("\n" + "*" * 20 + "Using Factorization Machine." + "*" * 20 + "\n")
+    fm = pylibfm.FM(num_factors=50,
+                    num_iter=100,
+                    verbose=True,
+                    task="classification",
+                    validation_size=0.2,
+                    initial_learning_rate=0.001,
+                    learning_rate_schedule="optimal",
+                    seed=1234)
+    fm.fit(x_train, y_train)
+    pred = fm.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())

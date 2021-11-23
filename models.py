@@ -125,5 +125,3 @@ def NeuralNetwork(x_train, y_train, x_test, y_test):
     model.fit(x_train, y_train)
     pred = model.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())
-
-

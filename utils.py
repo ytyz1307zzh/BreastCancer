@@ -2,6 +2,10 @@ import numpy as np
 import pandas
 from typing import List
 from sklearn.metrics import f1_score, accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import SelectKBest, RFECV, f_classif
+from mlxtend.feature_selection import SequentialFeatureSelector
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from Constant import *
@@ -64,6 +68,56 @@ def cal_score(pred: List[str], gold: List[str]):
     print(f"Accuracy: {round(acc*100, 2)}, Weighted F1: {round(weighted_f1*100, 2)}, Macro F1: {round(macro_f1*100, 2)}")
 
 
+def sequential_feature_select(x: np.ndarray, y: np.ndarray, n_features):
+    print("\n" + "*" * 20 + "Sequential Feature Selection" + "*" * 20)
+    lr_model = LogisticRegression()
+    sfs_model = SequentialFeatureSelector(lr_model,
+                                          k_features=n_features,
+                                          forward=False,
+                                          floating=True,
+                                          scoring='accuracy',
+                                          cv=5)
+    sfs_model = sfs_model.fit(x, y)
+    selected_idx = sfs_model.k_feature_idx_
+    selected_fea = [FEATURE_LIST[idx] for idx in selected_idx]
+    print("Selected features: ", ', '.join(selected_fea))
+    print()
+
+    # use the selected features to form a new feature set
+    x_sfs = sfs_model.transform(x)
+    return x_sfs
+
+
+def univariate_feature_select(x: np.ndarray, y: np.ndarray, n_features):
+    print("\n" + "*" * 20 + "Univariate Feature Selection" + "*" * 20)
+    ufs_model = SelectKBest(f_classif, k=n_features)
+    ufs_model = ufs_model.fit(x, y)
+    selected_idx = ufs_model.get_support(indices=True)
+    selected_fea = [FEATURE_LIST[idx] for idx in selected_idx]
+    print("Selected features: ", ', '.join(selected_fea))
+    print()
+
+    # use the selected features to form a new feature set
+    x_ufs = ufs_model.transform(x)
+    return x_ufs
+
+
+def recursive_feature_elimination(x: np.ndarray, y: np.ndarray):
+    print("\n" + "*" * 20 + "Recursive Feature Elimination" + "*" * 20)
+    rf_model = RandomForestClassifier(random_state=1234)
+    rfecv_model = RFECV(rf_model, cv=5, scoring='accuracy')
+    rfecv_model = rfecv_model.fit(x, y)
+    selected_idx = rfecv_model.get_support(indices=True)
+    selected_fea = [FEATURE_LIST[idx] for idx in selected_idx]
+    print("Optimal number of features: ", rfecv_model.n_features_)
+    print("Selected features: ", ', '.join(selected_fea))
+    print()
+
+    # use the selected features to form a new feature set
+    x_rfecv = rfecv_model.transform(x)
+    return x_rfecv
+
+
 def feature_correlation(df: pandas.DataFrame, threshold: float):
     # Feature correlation
     corr = df.corr().round(2)
@@ -89,6 +143,7 @@ def feature_correlation(df: pandas.DataFrame, threshold: float):
 
     # sort according to absolute correlation score, in descending order
     col_corr = sorted(col_corr, key=lambda x: x[2], reverse=True)
+    print("\n" + "*" * 20 + "Feature Correlation" + "*" * 20)
     print(f"{len(col_corr)} pairs of correlated features")
     print(col_corr)
     print()
@@ -145,4 +200,3 @@ def debug():
 
 if __name__ == "__main__":
     debug()
-

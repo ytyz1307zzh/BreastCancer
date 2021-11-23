@@ -35,7 +35,13 @@ seaborn==0.9.0
 
 ### Data
 We leverage the Breast Cancer Wisconsin (Diagnostic) Dataset collected by the researchers and surgeons from 
-the University of Wisconsin. One can also find the raw dataset from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29)
+the University of Wisconsin. One can also find the raw dataset from [UCI's machine learning repository](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29).
+
+### Run
+```bash
+python main.py [-input file_name]
+```
+where `file_name` is set to `data/data.csv` by default. For other optional arguments, see the Features and Functions section below.
 
 ### Features and Functions
 1. Data normalization. Use the argument `-data_norm` to enable.

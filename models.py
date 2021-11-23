@@ -135,7 +135,7 @@ def FM(x_train, y_train, x_test, y_test):
     print("\n" + "*" * 20 + "Using Factorization Machine." + "*" * 20 + "\n")
     fm = FactorizationMachineClassifier(n_components=50,
                                         random_state=1234,
-                                        max_iter=100)
+                                        max_iter=256)
     fm.fit(x_train, y_train)
     pred = fm.predict(x_test)
     cal_score(pred=pred, gold=y_test.tolist())
